@@ -60,7 +60,7 @@ interface Type : CodeEmbeddable
         val Object = from(java.lang.Object::class)
         val Number = from(java.lang.Number::class)
         val String = from(java.lang.String::class)
-        val StringBuilder = from(java.lang.StringBuilder::class)
+        val Optional = from(java.util.Optional::class)
 
         // Exceptions
         val Exception = from(java.lang.Exception::class)
@@ -71,7 +71,6 @@ interface Type : CodeEmbeddable
 
         // Annotations
         val Override = from(java.lang.Override::class)
-        val FunctionalInterface = from(java.lang.FunctionalInterface::class)
 
         // Utilities
         val Objects = from(java.util.Objects::class)

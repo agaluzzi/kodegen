@@ -16,8 +16,8 @@
 
 package galuzzi.codegen.java
 
-import galuzzi.codegen.CodeGen
 import galuzzi.codegen.CodeElement
+import galuzzi.codegen.CodeGen
 import galuzzi.codegen.CodeGenScope
 import java.util.*
 
@@ -58,6 +58,11 @@ class Javadoc : CodeElement
         add("<pre>\n$text\n</pre>\n")
     }
 
+    fun code(text: String)
+    {
+        add("<code>$text</code>")
+    }
+
     fun ul(vararg items: String)
     {
         add("<ul>\n")
@@ -91,24 +96,49 @@ class Javadoc : CodeElement
         add("{@link ${name.fqcn}}")
     }
 
-    fun tag(name: String, value: String)
+    fun author(value: String)
     {
-        tags += Tag(name, value)
+        tags += Tag("author", value, 1)
+    }
+
+    fun version(value: String)
+    {
+        tags += Tag("version", value, 2)
     }
 
     fun param(name: String, description: String)
     {
-        tag("param", "$name $description")
+        tags += Tag("param", "$name $description", 3)
     }
 
     fun returns(description:String)
     {
-        return tag("return", description)
+        tags += Tag("return", description, 4)
     }
 
     fun throws(type:String, description:String)
     {
-        tag("throws", "$type $description")
+        tags += Tag("throws", "$type $description", 5)
+    }
+
+    fun see(value: String)
+    {
+        tags += Tag("see", value, 6)
+    }
+
+    fun since(value: String)
+    {
+        tags += Tag("since", value, 7)
+    }
+
+    fun deprecated(description: String)
+    {
+        tags += Tag("deprecated", description, 9)
+    }
+
+    fun tag(name: String, value: String)
+    {
+        tags += Tag(name, value, 10)
     }
 
     fun isEmpty(): Boolean = (description.isBlank() && tags.isEmpty())
@@ -132,11 +162,21 @@ class Javadoc : CodeElement
                 _description.split('\n').forEach { +" * $it\n" }
                 if (haveTags) +" *\n"
             }
-            tags.filter { it.value.isNotBlank() }.forEach { +" * @${it.name} ${it.value}\n" }
+            tags.filter { it.value.isNotBlank() }
+                    .sorted()
+                    .forEach { +" * @${it.name} ${it.value}\n" }
             +" */\n"
         }
     }
 }
 
-private class Tag(val name:String, val value:String)
+private data class Tag(val name: String,
+                       val value: String,
+                       val order: Int) : Comparable<Tag>
+{
+    override fun compareTo(other: Tag): Int
+    {
+        return order.compareTo(other.order)
+    }
+}
 

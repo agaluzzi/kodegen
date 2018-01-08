@@ -17,6 +17,7 @@
 package galuzzi.codegen.java
 
 import galuzzi.codegen.CodeElement
+import galuzzi.codegen.CodeEmbeddable
 import galuzzi.codegen.CodeGen
 import galuzzi.codegen.java.support.*
 import galuzzi.codegen.join
@@ -49,9 +50,11 @@ class JavaEnum private constructor(override val name: TypeName,
     val type: ObjectType = Type.from(name)
     private val constants = ArrayList<Constant>()
 
-    fun constant(name: String, init: Constant.() -> Unit = {})
+    fun constant(name: String, init: Constant.() -> Unit = {}): Constant
     {
-        constants += Constant(name).apply(init)
+        val constant = Constant(name).apply(init)
+        constants += constant
+        return constant
     }
 
     override fun build(): CodeGen
@@ -76,7 +79,8 @@ class JavaEnum private constructor(override val name: TypeName,
     }
 
     class Constant internal constructor(val name: String) : CodeElement,
-                                                            Documented by Documented.Impl()
+                                                            Documented by Documented.Impl(),
+                                                            CodeEmbeddable
     {
         private var params: Array<out CodeGen> = emptyArray()
 
@@ -98,6 +102,14 @@ class JavaEnum private constructor(override val name: TypeName,
                     +')'
                 }
             }
+        }
+
+        /**
+         * Returns the enum constant name.
+         */
+        override fun toString(): String
+        {
+            return name
         }
     }
 }

@@ -41,6 +41,9 @@ data class Param(val type: Type,
         }
     }
 
+    /**
+     * Returns the name of the parameter.
+     */
     override fun toString(): String
     {
         return name

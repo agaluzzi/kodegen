@@ -63,7 +63,7 @@ class Imports(private val context: TypeName) : CodeElement
     override fun build(): CodeGen
     {
         return {
-            classMap.forEach { _, fqcn -> +stmt("import $fqcn") }
+            classMap.values.sorted().forEach { fqcn -> +stmt("import $fqcn") }
         }
     }
 }
