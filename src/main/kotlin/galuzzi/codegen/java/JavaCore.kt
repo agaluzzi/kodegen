@@ -18,13 +18,6 @@ package galuzzi.codegen.java
 
 import galuzzi.codegen.CodeGen
 
-/**
- * Creates a code generation function for a string literal.
- */
-fun literal(str: String): CodeGen
-{
-    return { +str }
-}
 
 /**
  * Creates a code generation function for a numeric literal.
@@ -39,7 +32,11 @@ fun number(n: Number): CodeGen
  */
 fun string(str: String): CodeGen
 {
-    return { +"\"$str\"" }
+    return {
+        +'"'
+        +str
+        +'"'
+    }
 }
 
 /**
@@ -58,7 +55,7 @@ fun stmt(str: String): CodeGen
 /**
  * Creates a code generation function for a comment -- single line or multi-line.
  *
- * @param text the comment, which may contain newline ('\n') characters for a multi-line comment
+ * @param text the comment (may contain '\n' characters for a multi-line comment)
  */
 fun comment(text: String): CodeGen
 {
@@ -69,7 +66,7 @@ fun comment(text: String): CodeGen
 }
 
 /**
- * Creates a code generation function for a code block, which is surrounded by curly braces.
+ * Creates a code generation function for a code block, which is surrounded by curly braces and indented.
  */
 fun block(content: CodeGen): CodeGen
 {
@@ -82,46 +79,4 @@ fun block(content: CodeGen): CodeGen
         newline()
         +"}\n"
     }
-}
-
-/**
- * Creates a code generation function for an if-then statement.
- */
-fun ifThen(test: CodeGen, then: CodeGen): CodeGen
-{
-    return {
-        newline()
-        +"if ("
-        +test
-        +')'
-        +block(then)
-    }
-}
-
-/**
- * Creates a code generation function for an if-then statement.
- */
-fun ifThen(test: String, then: CodeGen): CodeGen
-{
-    return ifThen({ +test }, then)
-}
-
-/**
- * Creates a code generation function for an if-then-else statement.
- */
-fun ifThenElse(test: CodeGen, then: CodeGen, default: CodeGen): CodeGen
-{
-    return {
-        +ifThen(test, then)
-        +"else"
-        +block(default)
-    }
-}
-
-/**
- * Creates a code generation function for an if-then-else statement.
- */
-fun ifThenElse(condition: String, then: CodeGen, default: CodeGen): CodeGen
-{
-    return ifThenElse({ +condition }, then, default)
 }

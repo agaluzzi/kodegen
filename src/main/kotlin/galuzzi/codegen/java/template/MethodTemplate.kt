@@ -18,7 +18,6 @@ package galuzzi.codegen.java.template
 
 import galuzzi.codegen.CodeGen
 import galuzzi.codegen.java.*
-import galuzzi.codegen.java.stmt
 import java.util.*
 
 /**
