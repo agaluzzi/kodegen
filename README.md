@@ -1,7 +1,4 @@
 # KodeGen
-A Kotlin library for generating source code, which leverages [type-safe builders](https://kotlinlang.org/docs/reference/type-safe-builders.html) to provide a fluent DSL for code generation.
+A [Kotlin](https://kotlinlang.org/) library for generating Java source code, which leverages [type-safe builders](https://kotlinlang.org/docs/reference/type-safe-builders.html) to provide a fluent DSL for code generation.
 
-Currently supported languages that can be generated are:
-- Java
-
-This project is licensed under the terms of the Apache License version 2.0.
+This project is licensed under the terms of the [Apache License (version 2.0)](https://www.apache.org/licenses/LICENSE-2.0).
