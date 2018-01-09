@@ -18,120 +18,145 @@ package galuzzi.codegen.java.template
 
 import galuzzi.codegen.CodeGen
 import galuzzi.codegen.java.*
-import java.util.*
+import galuzzi.codegen.java.support.FieldHolder
 
-/**
- * TODO...
- */
+
 interface MethodTemplate
 {
-    fun buildMethod(): JavaMethod
+    fun build(type: Type): JavaMethod
 }
 
-private object Types
+private class ToString(val init: JavaMethod.(Type) -> Unit) : MethodTemplate
 {
-    val Objects = Type.from(Objects::class)
-    val Collections = Type.from(Collections::class)
-}
-
-class ToString(private val body: CodeGen) : MethodTemplate
-{
-    override fun buildMethod(): JavaMethod
+    override fun build(type: Type): JavaMethod
     {
         return JavaMethod(Scope.PUBLIC, Type.String, "toString").apply {
             annotation(Type.Override)
-            body(body)
+            init.invoke(this, type)
         }
     }
 }
 
-class Equals(private val type: Type,
-             private val body: CodeGen) : MethodTemplate
+private class Equals(val init: JavaMethod.(Type) -> Unit) : MethodTemplate
 {
-    override fun buildMethod(): JavaMethod
+    override fun build(type: Type): JavaMethod
     {
         return JavaMethod(Scope.PUBLIC, Type.boolean, "equals").apply {
             annotation(Type.Override)
             param("o", Type.Object, allowNull = true)
-            body {
-                +"if (o == null) return false;\n"
-                +"if (o == this) return true;\n"
-                +"if (!(o instanceof "
-                +type
-                +")) return false;\nfinal "
-                +type
-                +" other = ("
-                +type
-                +") o;\n"
-                body.invoke(this)
-            }
+            init.invoke(this, type)
         }
     }
 }
 
-fun standardEquals(type: Type, fields: List<JavaField>): MethodTemplate
+private class HashCode(val init: JavaMethod.(Type) -> Unit) : MethodTemplate
 {
-    return Equals(type) {
-        fields.forEach { f ->
-            if (f.type.isPrimitive())
-            {
-                +"if (${f.name} != other.${f.name}) return false;\n"
-            }
-            else
-            {
-                +"if (!"
-                +Types.Objects
-                +".equals(${f.name}, other.${f.name})) return false;\n"
-            }
-        }
-        +"return true;"
-    }
-}
-
-class HashCode(private val body: CodeGen) : MethodTemplate
-{
-    override fun buildMethod(): JavaMethod
+    override fun build(type: Type): JavaMethod
     {
         return JavaMethod(Scope.PUBLIC, Type.int, "hashCode").apply {
             annotation(Type.Override)
-            body(body)
+            init.invoke(this, type)
         }
     }
 }
 
-fun standardHashCode(fields: List<JavaField>): MethodTemplate
+fun toStringWithBody(body: CodeGen): MethodTemplate
+{
+    return ToString { body(body) }
+}
+
+fun equalsWithBody(body: CodeGen): MethodTemplate
+{
+    return Equals { body(body) }
+}
+
+fun hashCodeWithBody(body: CodeGen): MethodTemplate
+{
+    return HashCode { body(body) }
+}
+
+fun toStringBasic(target: FieldHolder): MethodTemplate
+{
+    return ToString { type ->
+        body {
+            +"return \"${type.simpleName()}[\" +\n"
+            target.getFields().forEachIndexed { i, field ->
+                val label = if (i > 0) ", ${field.name}" else field.name
+                +"\"$label=\" + $field +\n"
+            }
+            +"']';\n"
+        }
+    }
+}
+
+fun equalsBasic(target: FieldHolder): MethodTemplate
+{
+    return Equals { type ->
+        body {
+            +"if (o == null) return false;\n"
+            +"if (o == this) return true;\n"
+            +"if (!(o instanceof "
+            +type
+            +")) return false;\nfinal "
+            +type
+            +" other = ("
+            +type
+            +") o;\n"
+            target.getFields().forEach { f ->
+                if (f.type.isPrimitive())
+                {
+                    +"if (${f.name} != other.${f.name}) return false;\n"
+                }
+                else
+                {
+                    +"if (!"
+                    +Type.Objects
+                    +".equals(${f.name}, other.${f.name})) return false;\n"
+                }
+            }
+            +"return true;\n"
+        }
+
+    }
+}
+
+fun hashCodeBasic(target: FieldHolder): MethodTemplate
 {
     return HashCode {
-        +"int result = 0;\n"
-        fields.forEach { f ->
-            when
+        body {
+            +"int result = 0;\n"
+            for (f in target.getFields())
             {
-                f.type == Type.boolean -> +"result = 31 * result + (${f.name} ? 1 : 0);\n"
-                f.type == Type.long    -> +"result = 31 * result + (int) (${f.name} ^ (${f.name} >>> 32));\n"
-                f.type.isPrimitive()   -> +"result = 31 * result + ${f.name};\n"
-                else                   -> +"result = 31 * result + (${f.name} != null ? ${f.name}.hashCode() : 0);\n"
+                when
+                {
+                    f.type == Type.boolean -> +"result = 31 * result + (${f.name} ? 1 : 0);\n"
+                    f.type == Type.long    -> +"result = 31 * result + (int) (${f.name} ^ (${f.name} >>> 32));\n"
+                    f.type.isPrimitive()   -> +"result = 31 * result + ${f.name};\n"
+                    else                   -> +"result = 31 * result + (${f.name} != null ? ${f.name}.hashCode() : 0);\n"
+                }
             }
+            +"return result;\n"
         }
-        +"return result;"
     }
 }
 
-class Getter(private val field: JavaField,
-             private val scope: Scope = Scope.PUBLIC,
-             private val nonNullCollections: Boolean = false) : MethodTemplate
+private class Getter(val field: JavaField,
+                     val scope: Scope,
+                     val useEmptyCollections: Boolean) : MethodTemplate
 {
-    override fun buildMethod(): JavaMethod
+    override fun build(type: Type): JavaMethod
     {
-        val type = field.type
-        val prefix = if (type.toObjectType() == Type.Boolean) "is" else "get"
+        val prefix = if (field.type.toObjectType() == Type.Boolean) "is" else "get"
 
-        return JavaMethod(scope, type, prefix + publicName(field)).apply {
+        return JavaMethod(scope, field.type, prefix + field.publicName()).apply {
             body {
-                if (nonNullCollections && type is ParameterizedType && (type.base == Type.List || type.base == Type.Set))
+                if (useEmptyCollections)
                 {
-                    +"if (${field.name} == null) return "
-                    +Types.Collections
-                    +".empty${type.base.simpleName()}();\n"
+                    val collectionType = field.collectionType()
+                    if (collectionType != null)
+                    {
+                        +"if (${field.name} == null) return ${Type.Collections}.empty$collectionType();\n"
+                    }
                 }
                 +stmt("return ${field.name}")
             }
@@ -145,32 +170,58 @@ class Getter(private val field: JavaField,
     }
 }
 
-class Setter(private val field: JavaField,
-             private val scope: Scope = Scope.PUBLIC,
-             private val returnType: Type = Type.void) : MethodTemplate
+private class Setter(val field: JavaField,
+                     val scope: Scope,
+                     val allowNull: Boolean,
+                     val returnSelf: Boolean) : MethodTemplate
 {
-    override fun buildMethod(): JavaMethod
+    override fun build(type: Type): JavaMethod
     {
-        return JavaMethod(scope, returnType, "set${publicName(field)}").apply {
-            param(field.name, field.type, field.nullable, field.description)
+        val returnType = if (returnSelf) type else Type.void
+
+        return JavaMethod(scope, returnType, "set${field.publicName()}").apply {
+            val param = param(field.name, field.type, allowNull, field.description)
             body {
-                +stmt("this.${field.name} = ${field.name}")
-                if (this@Setter.returnType != Type.void)
+                +"$field = $param;\n"
+                if (returnSelf)
                 {
-                    +"return this;"
+                    +"return this;\n"
                 }
             }
             javadoc {
-                if (this@Setter.returnType != Type.void)
+                if (returnSelf)
                 {
-                    returns("this object (for method chaining)")
+                    returns("this ${type.simpleName()} (for method chaining)")
                 }
             }
         }
     }
 }
 
-private fun publicName(field: JavaField): String
+private fun JavaField.publicName(): String = name.trim('_').capitalize()
+
+private fun JavaField.collectionType(): String?
 {
-    return field.name.trim('_').capitalize()
+    return when (type.baseType())
+    {
+        Type.List -> "List"
+        Type.Set  -> "Set"
+        Type.Map  -> "Map"
+        else      -> null
+    }
+}
+
+fun getter(field: JavaField,
+           scope: Scope = Scope.PUBLIC,
+           useEmptyCollections: Boolean = false): MethodTemplate
+{
+    return Getter(field, scope, useEmptyCollections)
+}
+
+fun setter(field: JavaField,
+           scope: Scope = Scope.PUBLIC,
+           allowNull: Boolean = true,
+           returnSelf: Boolean = false): MethodTemplate
+{
+    return Setter(field, scope, allowNull, returnSelf)
 }

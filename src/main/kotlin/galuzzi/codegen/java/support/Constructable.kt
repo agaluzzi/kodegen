@@ -18,7 +18,7 @@ package galuzzi.codegen.java.support
 
 import galuzzi.codegen.java.JavaConstructor
 import galuzzi.codegen.java.Scope
-import galuzzi.codegen.java.TypeName
+import galuzzi.codegen.java.Type
 import galuzzi.codegen.java.template.ConstructorTemplate
 
 /**
@@ -33,7 +33,7 @@ interface Constructable
 
     fun constructor(template: ConstructorTemplate): JavaConstructor
 
-    class Impl(private val name: TypeName) : Constructable
+    class Impl(private val type: Type) : Constructable
     {
         private val constructors = mutableListOf<JavaConstructor>()
 
@@ -44,14 +44,14 @@ interface Constructable
 
         override fun constructor(scope: Scope, init: JavaConstructor.() -> Unit): JavaConstructor
         {
-            val constructor = JavaConstructor(name, scope).apply(init)
+            val constructor = JavaConstructor(type, scope).apply(init)
             constructors += constructor
             return constructor
         }
 
         override fun constructor(template: ConstructorTemplate): JavaConstructor
         {
-            val constructor = template.buildConstructor(name)
+            val constructor = template.build(type)
             constructors += constructor
             return constructor
         }

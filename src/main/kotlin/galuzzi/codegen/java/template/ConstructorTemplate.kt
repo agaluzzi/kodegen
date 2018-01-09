@@ -16,30 +16,56 @@
 
 package galuzzi.codegen.java.template
 
-import galuzzi.codegen.java.*
+import galuzzi.codegen.java.JavaConstructor
+import galuzzi.codegen.java.JavaField
+import galuzzi.codegen.java.Scope
+import galuzzi.codegen.java.Type
+import galuzzi.codegen.java.support.FieldHolder
 
 /**
  * TODO...
  */
 interface ConstructorTemplate
 {
-    fun buildConstructor(typeName: TypeName): JavaConstructor
+    fun build(type: Type): JavaConstructor
 }
 
-class BasicConstructor(private val fields: List<JavaField>,
-                       private val scope: Scope = Scope.PUBLIC) : ConstructorTemplate
+private class BasicConstructor(val scope: Scope,
+                               val fields: List<JavaField>,
+                               val allowNulls: Boolean) : ConstructorTemplate
 {
-    override fun buildConstructor(typeName: TypeName): JavaConstructor
+    override fun build(type: Type): JavaConstructor
     {
-        return JavaConstructor(typeName, scope).apply {
-            fields.forEach { f ->
-                param(f.name, f.type, f.nullable, f.description)
+        return JavaConstructor(type, scope).apply {
+            javadoc {
+                +"Constructs a new ${type.simpleName()}."
             }
+
+            // Add parameter for each field
+            fields.forEach { field ->
+                param(field.name, field.type, allowNulls, field.description)
+            }
+
+            // Add a statement to set each field
             body {
-                fields.forEach { f ->
-                    +stmt("$f = ${f.name}")
+                fields.forEach { field ->
+                    +"$field = ${field.name};\n"
                 }
             }
         }
     }
+}
+
+fun basicConstructor(fields: List<JavaField>,
+                     scope: Scope = Scope.PUBLIC,
+                     allowNulls: Boolean = true): ConstructorTemplate
+{
+    return BasicConstructor(scope, fields, allowNulls)
+}
+
+fun basicConstructor(target: FieldHolder,
+                     scope: Scope = Scope.PUBLIC,
+                     allowNulls: Boolean = true): ConstructorTemplate
+{
+    return BasicConstructor(scope, target.getFields(), allowNulls)
 }

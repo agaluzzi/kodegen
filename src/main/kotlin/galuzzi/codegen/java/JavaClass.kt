@@ -26,33 +26,32 @@ import galuzzi.codegen.java.support.*
  */
 @CodeGenScope
 class JavaClass private constructor(override val name: TypeName,
+                                    override val type: ObjectType,
                                     val scope: Scope) : JavaTypeElement,
                                                         Annotated by Annotated.Impl(),
                                                         Documented by Documented.Impl(),
                                                         FieldHolder by FieldHolder.Impl(),
-                                                        MethodHolder by MethodHolder.Impl(),
-                                                        Constructable by Constructable.Impl(name),
+                                                        MethodHolder by MethodHolder.Impl(type),
+                                                        Constructable by Constructable.Impl(type),
                                                         TypeContainer by TypeContainer.Impl(name)
 {
     companion object
     {
+        fun create(name: TypeName,
+                   scope: Scope = Scope.PUBLIC,
+                   init: JavaClass.() -> Unit = {}): JavaClass
+        {
+            return JavaClass(name, Type.from(name), scope).apply(init)
+        }
+
         fun create(name: String,
                    pkg: JavaPackage,
                    scope: Scope = Scope.PUBLIC,
                    init: JavaClass.() -> Unit = {}): JavaClass
         {
-            return JavaClass(TypeName.create(name, pkg), scope).apply(init)
-        }
-
-        fun create(name: TypeName,
-                   scope: Scope = Scope.PUBLIC,
-                   init: JavaClass.() -> Unit = {}): JavaClass
-        {
-            return JavaClass(name, scope).apply(init)
+            return create(TypeName.create(name, pkg), scope, init)
         }
     }
-
-    val type: ObjectType = Type.from(name)
 
     private val modifiers = Modifiers()
     private val extends = mutableListOf<Type>()

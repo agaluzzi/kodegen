@@ -30,7 +30,6 @@ interface FieldHolder
     fun field(name: String,
               type: Type,
               scope: Scope = Scope.PRIVATE,
-              nullable: Boolean = true,
               description: String = "",
               init: JavaField.() -> Unit = {}): JavaField
 
@@ -43,9 +42,9 @@ interface FieldHolder
             return fields
         }
 
-        override fun field(name: String, type: Type, scope: Scope, nullable: Boolean, description: String, init: JavaField.() -> Unit): JavaField
+        override fun field(name: String, type: Type, scope: Scope, description: String, init: JavaField.() -> Unit): JavaField
         {
-            val field = JavaField(scope, type, name, nullable, description).apply(init)
+            val field = JavaField(scope, type, name, description).apply(init)
             fields += field
             return field
         }

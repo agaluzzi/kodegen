@@ -88,9 +88,7 @@ class JavaMethod internal constructor(val scope: Scope,
 internal fun addParamJavadoc(params: List<Param>, javadoc: Javadoc)
 {
     params.filter { it.description.isNotBlank() }
-            .forEach { p ->
-                javadoc.param(p.name, p.description)
-            }
+            .forEach { javadoc.param(it.name, it.description) }
 }
 
 internal fun nullChecks(params: List<Param>): CodeGen

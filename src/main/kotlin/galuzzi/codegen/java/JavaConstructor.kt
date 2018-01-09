@@ -30,7 +30,7 @@ import galuzzi.codegen.join
  * @author Aaron Galuzzi (2/11/2017)
  */
 @CodeGenScope
-class JavaConstructor internal constructor(val name: TypeName,
+class JavaConstructor internal constructor(val type: Type,
                                            val scope: Scope) : CodeElement,
                                                                Annotated by Annotated.Impl(),
                                                                Documented by Documented.Impl(),
@@ -47,7 +47,7 @@ class JavaConstructor internal constructor(val name: TypeName,
             +getAnnotations()
             newline()
             +scope
-            +name.simpleName()
+            +type.simpleName()
             +'('
             +join(getParams(), ", ")
             +')'

@@ -17,9 +17,9 @@
 package galuzzi.codegen.java
 
 import galuzzi.codegen.java.control.switch
-import galuzzi.codegen.java.template.BasicConstructor
-import galuzzi.codegen.java.template.Getter
-import galuzzi.codegen.java.template.ToString
+import galuzzi.codegen.java.template.basicConstructor
+import galuzzi.codegen.java.template.getter
+import galuzzi.codegen.java.template.toStringWithBody
 
 internal class JavaEnumTest : JavaGenTest("expect/Enum.java")
 {
@@ -63,12 +63,14 @@ internal class JavaEnumTest : JavaGenTest("expect/Enum.java")
                 final()
             }
 
-            constructor(BasicConstructor(getFields(), Scope.PRIVATE))
+            constructor(basicConstructor(this, Scope.PRIVATE))
 
-            method(Getter(number))
-            method(Getter(headerLength))
+            method(getter(number))
+            method(getter(headerLength))
 
-            method(ToString { +"return $displayName;" })
+            method(toStringWithBody {
+                +"return $displayName;"
+            })
 
             method("get", Type.Optional.of(type)) {
                 static()

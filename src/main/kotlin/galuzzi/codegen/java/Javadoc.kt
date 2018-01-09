@@ -30,70 +30,53 @@ class Javadoc : CodeElement
     private val description = StringBuilder()
     private val tags = ArrayList<Tag>()
 
-    fun add(text: String)
-    {
-        description.append(text)
-    }
-
-    fun summary(text: String?)
-    {
-        if (text != null && text.isNotBlank())
-        {
-            p(text)
-        }
-    }
-
     operator fun String.unaryPlus()
     {
-        add(this)
+        description.append(this)
     }
 
-    fun p(text: String)
+    fun pad()
     {
-        add("<p>$text</p>\n")
+        if (description.isBlank())
+        {
+            return
+        }
+        if (!description.endsWith('\n'))
+        {
+            +"\n"
+        }
+        if (!description.endsWith(PARAGRAPH_SEPARATOR))
+        {
+            +PARAGRAPH_SEPARATOR
+        }
     }
 
     fun pre(text: String)
     {
-        add("<pre>\n$text\n</pre>\n")
+        +"<pre>\n$text\n</pre>\n"
     }
 
     fun code(text: String)
     {
-        add("<code>$text</code>")
+        +"<code>$text</code>"
     }
 
-    fun ul(vararg items: String)
+    fun list(items: Iterable<String>, ordered: Boolean = false)
     {
-        add("<ul>\n")
-        items.forEach { add("<li>$it</li>\n") }
-        add("</ul>\n")
+        val tag = if (ordered) "ol" else "ul"
+        +"<$tag>\n"
+        items.forEach { +"  <li>$it</li>\n" }
+        +"</$tag>\n"
     }
 
-    fun ul(items: Iterable<String>)
+    fun list(vararg items: String, ordered: Boolean = false)
     {
-        add("<ul>\n")
-        items.forEach { add("<li>$it</li>\n") }
-        add("</ul>\n")
-    }
-
-    fun ol(vararg items: String)
-    {
-        add("<ol>\n")
-        items.forEach { add("<li>$it</li>\n") }
-        add("</ol>\n")
-    }
-
-    fun ol(items: Iterable<String>)
-    {
-        add("<ol>\n")
-        items.forEach { add("<li>$it</li>\n") }
-        add("</ol>\n")
+        list(items.asIterable(), ordered)
     }
 
     fun link(name: TypeName)
     {
-        add("{@link ${name.fqcn}}")
+        +"{@link ${name.fqcn}}"
     }
 
     fun author(value: String)
@@ -162,9 +145,7 @@ class Javadoc : CodeElement
                 _description.split('\n').forEach { +" * $it\n" }
                 if (haveTags) +" *\n"
             }
-            tags.filter { it.value.isNotBlank() }
-                    .sorted()
-                    .forEach { +" * @${it.name} ${it.value}\n" }
+            tags.sorted().forEach { +" * @${it.name} ${it.value}\n" }
             +" */\n"
         }
     }
@@ -180,3 +161,4 @@ private data class Tag(val name: String,
     }
 }
 
+private const val PARAGRAPH_SEPARATOR = "<p>\n"

@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package galuzzi.codegen.java
+package galuzzi.codegen.java.support
 
-import galuzzi.codegen.CodeElement
-import galuzzi.codegen.java.support.Annotated
-import galuzzi.codegen.java.support.Documented
-import galuzzi.codegen.java.support.Typed
+import galuzzi.codegen.java.Type
 
 /**
- * TODO...
+ * Something that has a [Type].
  */
-interface JavaTypeElement : Typed, CodeElement, Annotated, Documented
+interface Typed
 {
-    val name: TypeName
+    val type: Type
 }

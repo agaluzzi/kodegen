@@ -36,7 +36,7 @@ interface MethodHolder
 
     fun method(template: MethodTemplate): JavaMethod
 
-    class Impl : MethodHolder
+    class Impl(private val type: Type) : MethodHolder
     {
         private val methods = mutableListOf<JavaMethod>()
 
@@ -58,7 +58,7 @@ interface MethodHolder
 
         override fun method(template: MethodTemplate): JavaMethod
         {
-            val method = template.buildMethod()
+            val method = template.build(type)
             methods += method
             return method
         }

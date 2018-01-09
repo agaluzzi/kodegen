@@ -27,6 +27,8 @@ interface Type : CodeEmbeddable
 
     fun toObjectType(): ObjectType
 
+    fun baseType(): Type = this
+
     fun array(): Type
     {
         return ArrayType(this)
@@ -74,6 +76,7 @@ interface Type : CodeEmbeddable
 
         // Utilities
         val Objects = from(java.util.Objects::class)
+        val Collections = from(java.util.Collections::class)
 
         // Collections
         val List = from(java.util.List::class)
@@ -165,6 +168,8 @@ class ParameterizedType(val base: ObjectType, vararg parameters: ObjectType) : O
     {
         return params[i]
     }
+
+    override fun baseType(): Type = base
 
     override fun toString(): String
     {

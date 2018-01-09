@@ -30,7 +30,6 @@ import galuzzi.codegen.java.support.Documented
 open class JavaField internal constructor(val scope: Scope,
                                           val type: Type,
                                           val name: String,
-                                          val nullable: Boolean,
                                           val description: String) : CodeElement,
                                                                      Annotated by Annotated.Impl(),
                                                                      Documented by Documented.Impl(),
