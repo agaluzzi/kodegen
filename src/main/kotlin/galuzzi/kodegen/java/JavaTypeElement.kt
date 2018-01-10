@@ -22,7 +22,7 @@ import galuzzi.kodegen.java.support.Documented
 import galuzzi.kodegen.java.support.Typed
 
 /**
- * TODO...
+ * A top-level type (code element) for which a .java file can be created.
  */
 interface JavaTypeElement : Typed, CodeElement, Annotated, Documented
 {

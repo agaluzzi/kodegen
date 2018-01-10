@@ -24,13 +24,13 @@ import galuzzi.kodegen.java.support.Annotated
 import galuzzi.kodegen.java.support.Documented
 
 /**
- * @author Aaron Galuzzi (3/9/2017)
+ * A single field of a class or an interface.
  */
 @CodeGenScope
-open class JavaField internal constructor(val scope: Scope,
-                                          val type: Type,
-                                          val name: String,
-                                          val description: String) : CodeElement,
+class JavaField internal constructor(val scope: Scope,
+                                     val type: Type,
+                                     val name: String,
+                                     val description: String) : CodeElement,
                                                                      Annotated by Annotated.Impl(),
                                                                      Documented by Documented.Impl(),
                                                                      CodeEmbeddable

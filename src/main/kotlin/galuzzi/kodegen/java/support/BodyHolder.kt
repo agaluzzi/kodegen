@@ -19,12 +19,21 @@ package galuzzi.kodegen.java.support
 import galuzzi.kodegen.CodeGen
 
 /**
- * TODO...
+ * A code element that contains a body.
  */
 interface BodyHolder
 {
+    /**
+     * @return the body code generation function
+     */
     fun getBody(): CodeGen
 
+    /**
+     * Sets the body.
+     *
+     * This function should only be called once.
+     * Calling this function multiple times will replace the previously set value.
+     */
     fun body(block: CodeGen)
 
     class Impl : BodyHolder

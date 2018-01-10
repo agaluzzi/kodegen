@@ -20,13 +20,13 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
- * TODO...
+ * Represents a valid Java package name.
  */
 data class JavaPackage(val name: String)
 {
     init
     {
-        if (name != "" && !VALID.matches(name))
+        if (name != "" && !VALID_NAME.matches(name))
         {
             throw IllegalArgumentException("Invalid package name: $name")
         }
@@ -51,7 +51,7 @@ data class JavaPackage(val name: String)
 
     companion object
     {
-        private val VALID = Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$")
+        private val VALID_NAME = Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$")
 
         val DEFAULT = JavaPackage("")
     }

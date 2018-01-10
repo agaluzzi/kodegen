@@ -19,7 +19,7 @@ package galuzzi.kodegen.java.support
 import galuzzi.kodegen.java.Javadoc
 
 /**
- * TODO...
+ * A code element that supports Javadoc.
  */
 interface Documented
 {

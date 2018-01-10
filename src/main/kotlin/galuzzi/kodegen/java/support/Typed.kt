@@ -19,7 +19,7 @@ package galuzzi.kodegen.java.support
 import galuzzi.kodegen.java.Type
 
 /**
- * Something that has a [Type].
+ * A code element that has a [Type].
  */
 interface Typed
 {

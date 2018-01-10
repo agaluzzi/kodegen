@@ -27,7 +27,7 @@ import galuzzi.kodegen.join
 
 
 /**
- * @author Aaron Galuzzi (2/11/2017)
+ * A constructor, which is similar to a [JavaMethod], but has no modifiers or return type.
  */
 @CodeGenScope
 class JavaConstructor internal constructor(val type: Type,

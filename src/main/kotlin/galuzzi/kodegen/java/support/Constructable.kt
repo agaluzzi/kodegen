@@ -22,15 +22,24 @@ import galuzzi.kodegen.java.Type
 import galuzzi.kodegen.java.template.ConstructorTemplate
 
 /**
- * TODO...
+ * A code element that may contain constructors.
  */
 interface Constructable
 {
+    /**
+     * @return the list of constructors
+     */
     fun getConstructors(): List<JavaConstructor>
 
+    /**
+     * Adds a constructor.
+     */
     fun constructor(scope: Scope = Scope.PUBLIC,
                     init: JavaConstructor.() -> Unit = {}): JavaConstructor
 
+    /**
+     * Adds a constructor.
+     */
     fun constructor(template: ConstructorTemplate): JavaConstructor
 
     class Impl(private val type: Type) : Constructable

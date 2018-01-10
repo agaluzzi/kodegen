@@ -20,7 +20,7 @@ import galuzzi.kodegen.CodeEmbeddable
 import java.util.*
 
 /**
- * @author Aaron Galuzzi (2/11/2017)
+ * Access modifiers (excluding [Scope]) that can be applied to classes, methods. fields, etc.
  */
 enum class Modifier(val prefix: String)
 {

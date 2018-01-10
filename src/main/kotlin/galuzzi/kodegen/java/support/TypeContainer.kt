@@ -22,7 +22,7 @@ import galuzzi.kodegen.java.Scope
 import galuzzi.kodegen.java.TypeName
 
 /**
- * TODO...
+ * A code element that may contain nested types.
  */
 interface TypeContainer
 {

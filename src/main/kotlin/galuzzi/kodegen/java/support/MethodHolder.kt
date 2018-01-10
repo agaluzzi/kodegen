@@ -22,7 +22,7 @@ import galuzzi.kodegen.java.Type
 import galuzzi.kodegen.java.template.MethodTemplate
 
 /**
- * TODO...
+ * A code element that may contain methods.
  */
 interface MethodHolder
 {

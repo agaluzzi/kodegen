@@ -23,7 +23,7 @@ import galuzzi.kodegen.java.support.*
 import galuzzi.kodegen.join
 
 /**
- * TODO...
+ * A generated Java enum.
  */
 class JavaEnum private constructor(override val name: TypeName,
                                    override val type: ObjectType,

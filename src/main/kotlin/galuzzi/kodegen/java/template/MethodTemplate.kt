@@ -20,7 +20,9 @@ import galuzzi.kodegen.CodeGen
 import galuzzi.kodegen.java.*
 import galuzzi.kodegen.java.support.FieldHolder
 
-
+/**
+ * A template for building a method.
+ */
 interface MethodTemplate
 {
     fun build(type: Type): JavaMethod

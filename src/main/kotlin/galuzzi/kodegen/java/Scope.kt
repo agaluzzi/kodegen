@@ -19,7 +19,7 @@ package galuzzi.kodegen.java
 import galuzzi.kodegen.CodeEmbeddable
 
 /**
- * @author Aaron Galuzzi (2/11/2017)
+ * Enumeration of the visibility access modifiers.
  */
 enum class Scope(private val prefix: String) : CodeEmbeddable
 {

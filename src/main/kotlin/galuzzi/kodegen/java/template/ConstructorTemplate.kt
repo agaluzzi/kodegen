@@ -23,7 +23,7 @@ import galuzzi.kodegen.java.Type
 import galuzzi.kodegen.java.support.FieldHolder
 
 /**
- * TODO...
+ * A template for building a constructor.
  */
 interface ConstructorTemplate
 {

@@ -22,7 +22,7 @@ import galuzzi.kodegen.java.support.*
 
 
 /**
- * @author Aaron Galuzzi (2/11/2017)
+ * A generated Java class.
  */
 @CodeGenScope
 class JavaClass private constructor(override val name: TypeName,

@@ -21,7 +21,7 @@ import galuzzi.kodegen.java.Scope
 import galuzzi.kodegen.java.Type
 
 /**
- * TODO...
+ * A code element that may contain fields.
  */
 interface FieldHolder
 {

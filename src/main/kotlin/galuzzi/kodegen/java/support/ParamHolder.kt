@@ -21,7 +21,7 @@ import galuzzi.kodegen.java.Type
 import java.util.*
 
 /**
- * TODO...
+ * A code element that may contain parameters.
  */
 interface ParamHolder
 {

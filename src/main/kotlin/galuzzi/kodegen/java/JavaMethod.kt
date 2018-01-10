@@ -27,7 +27,7 @@ import galuzzi.kodegen.join
 
 
 /**
- * @author Aaron Galuzzi (2/11/2017)
+ * A single method of a class or an interface.
  */
 @CodeGenScope
 class JavaMethod internal constructor(val scope: Scope,

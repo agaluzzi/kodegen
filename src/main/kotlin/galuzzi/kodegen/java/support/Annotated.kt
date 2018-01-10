@@ -20,12 +20,21 @@ import galuzzi.kodegen.java.JavaAnnotation
 import galuzzi.kodegen.java.Type
 
 /**
- * TODO...
+ * A code element that supports annotations.
  */
 interface Annotated
 {
+    /**
+     * Adds an annotation.
+     *
+     * @param type the annotation type
+     * @param init (optional) function for configuring the annotation
+     */
     fun annotation(type: Type, init: JavaAnnotation.() -> Unit = { }): JavaAnnotation
 
+    /**
+     * @return the list of annotations
+     */
     fun getAnnotations(): List<JavaAnnotation>
 
     fun hasAnnotations(): Boolean

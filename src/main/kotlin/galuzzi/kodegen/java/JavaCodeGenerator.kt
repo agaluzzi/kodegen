@@ -20,17 +20,17 @@ import galuzzi.kodegen.CodeWriter
 import java.nio.file.Files
 import java.nio.file.Path
 
+private const val IMPORT_PLACEHOLDER = "__IMPORT_PLACEHOLDER__"
+
 /**
- * TODO...
+ * A utility for generating Java source code files.
+ *
+ * Instances of this class are created/configured with an output directory and can then be used to generate .java files
+ * within the output directory.
  */
 class JavaCodeGenerator(private val outputDir: Path)
 {
     var header = ""
-
-    companion object
-    {
-        private val IMPORT_PLACEHOLDER = "__IMPORT_PLACEHOLDER__"
-    }
 
     fun generate(elem: JavaTypeElement): Path
     {

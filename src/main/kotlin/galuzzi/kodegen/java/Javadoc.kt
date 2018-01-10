@@ -22,7 +22,7 @@ import galuzzi.kodegen.CodeGenScope
 import java.util.*
 
 /**
- * @author Aaron Galuzzi (3/9/2017)
+ * A Javadoc comment for a code element.
  */
 @CodeGenScope
 class Javadoc : CodeElement
