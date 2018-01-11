@@ -30,13 +30,14 @@ import galuzzi.kodegen.java.support.Documented
 class JavaField internal constructor(val scope: Scope,
                                      val type: Type,
                                      val name: String,
-                                     val description: String) : CodeElement,
+                                     val description: String,
+                                     val owner: Type) : CodeElement,
                                                                      Annotated by Annotated.Impl(),
                                                                      Documented by Documented.Impl(),
                                                                      CodeEmbeddable
 {
     private val modifiers = Modifiers()
-    private var value: CodeGen? = null
+    var value: CodeGen? = null
 
     fun static()
     {
@@ -53,11 +54,6 @@ class JavaField internal constructor(val scope: Scope,
         modifiers += Modifier.VOLATILE
     }
 
-    fun value(value: CodeGen)
-    {
-        this.value = value
-    }
-
     override fun build(): CodeGen
     {
         return {
@@ -69,10 +65,9 @@ class JavaField internal constructor(val scope: Scope,
             +type
             +' '
             +name
-            if (value != null)
-            {
+            value?.apply {
                 +" = "
-                +value!!
+                +this
             }
             +";\n"
         }
@@ -80,8 +75,12 @@ class JavaField internal constructor(val scope: Scope,
 
     fun isPrimitive(): Boolean = type.isPrimitive()
 
+    fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
+
+    fun isFinal(): Boolean = modifiers.contains(Modifier.FINAL)
+
     /**
-     * @return a reference to this field, in the form: `this.{name}`
+     * @return a reference to this field, in the form: `this.{name}` for member fields or `{class}.{name}` for static fields
      */
-    override fun toString(): String = "this." + name
+    override fun toString(): String = if (isStatic()) "$owner.$name" else "this.$name"
 }

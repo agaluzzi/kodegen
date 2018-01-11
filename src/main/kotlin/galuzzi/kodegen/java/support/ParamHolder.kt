@@ -16,23 +16,43 @@
 
 package galuzzi.kodegen.java.support
 
+import galuzzi.kodegen.java.JavaField
 import galuzzi.kodegen.java.Param
 import galuzzi.kodegen.java.Type
 import java.util.*
 
 /**
- * A code element that may contain parameters.
+ * A code element that may contain parameters. (i.e. a method or constructor)
  */
 interface ParamHolder
 {
+    /**
+     * @return the list of all parameters that have been added
+     */
     fun getParams(): List<Param>
 
+    /**
+     * Adds a parameter.
+     */
     fun param(name: String,
               type: Type,
               allowNull: Boolean = true,
               description: String = "",
               varargs: Boolean = false,
               init: Param.() -> Unit = {}): Param
+
+    /**
+     * Adds a parameter that corresponds to a field.
+     * The name, type, and description of the parameter will be equal to that of the field.
+     *
+     * @param field the field from which to obtain the name, type, and description
+     * @param allowNull specifies whether an argument may be null -- if false, a null check will be added to the method body
+     */
+    fun param(field: JavaField,
+              allowNull: Boolean = true): Param
+    {
+        return param(field.name, field.type, allowNull, field.description)
+    }
 
     class Impl : ParamHolder
     {

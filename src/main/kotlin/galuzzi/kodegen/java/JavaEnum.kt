@@ -30,7 +30,7 @@ class JavaEnum private constructor(override val name: TypeName,
                                    val scope: Scope) : JavaTypeElement,
                                                        Annotated by Annotated.Impl(),
                                                        Documented by Documented.Impl(),
-                                                       FieldHolder by FieldHolder.Impl(),
+                                                       FieldHolder by FieldHolder.Impl(type),
                                                        MethodHolder by MethodHolder.Impl(type),
                                                        Constructable by Constructable.Impl(type),
                                                        TypeContainer by TypeContainer.Impl(name)

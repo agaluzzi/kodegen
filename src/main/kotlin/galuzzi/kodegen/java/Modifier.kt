@@ -41,6 +41,11 @@ class Modifiers : CodeEmbeddable
         set += modifier
     }
 
+    fun contains(modifier: Modifier): Boolean
+    {
+        return set.contains(modifier)
+    }
+
     override fun toString(): String
     {
         return set.joinToString("") { it.prefix }

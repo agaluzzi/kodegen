@@ -25,15 +25,26 @@ import galuzzi.kodegen.java.Type
  */
 interface FieldHolder
 {
+    /**
+     * @return the list of all fields that have been added
+     */
     fun getFields(): List<JavaField>
 
+    /**
+     * @return the list of all (non-static) member fields that have been added
+     */
+    fun getMemberFields(): List<JavaField> = getFields().filter { !it.isStatic() }
+
+    /**
+     * Adds a field.
+     */
     fun field(name: String,
               type: Type,
               scope: Scope = Scope.PRIVATE,
               description: String = "",
               init: JavaField.() -> Unit = {}): JavaField
 
-    class Impl : FieldHolder
+    class Impl(private val owner: Type) : FieldHolder
     {
         private val fields = mutableListOf<JavaField>()
 
@@ -44,7 +55,7 @@ interface FieldHolder
 
         override fun field(name: String, type: Type, scope: Scope, description: String, init: JavaField.() -> Unit): JavaField
         {
-            val field = JavaField(scope, type, name, description).apply(init)
+            val field = JavaField(scope, type, name, description, owner).apply(init)
             fields += field
             return field
         }

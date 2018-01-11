@@ -82,11 +82,11 @@ fun toStringBasic(target: FieldHolder): MethodTemplate
     return ToString { type ->
         body {
             +"return \"${type.simpleName()}[\" +\n"
-            target.getFields().forEachIndexed { i, field ->
+            target.getMemberFields().forEachIndexed { i, field ->
                 val label = if (i > 0) ", ${field.name}" else field.name
-                +"\"$label=\" + $field +\n"
+                +"       \"$label=\" + $field +\n"
             }
-            +"']';\n"
+            +"       \"]\";\n"
         }
     }
 }
@@ -104,7 +104,7 @@ fun equalsBasic(target: FieldHolder): MethodTemplate
             +" other = ("
             +type
             +") o;\n"
-            target.getFields().forEach { f ->
+            target.getMemberFields().forEach { f ->
                 if (f.type.isPrimitive())
                 {
                     +"if (${f.name} != other.${f.name}) return false;\n"
@@ -127,7 +127,7 @@ fun hashCodeBasic(target: FieldHolder): MethodTemplate
     return HashCode {
         body {
             +"int result = 0;\n"
-            for (f in target.getFields())
+            for (f in target.getMemberFields())
             {
                 when
                 {

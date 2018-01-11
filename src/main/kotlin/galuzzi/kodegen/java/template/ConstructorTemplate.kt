@@ -67,5 +67,5 @@ fun basicConstructor(target: FieldHolder,
                      scope: Scope = Scope.PUBLIC,
                      allowNulls: Boolean = true): ConstructorTemplate
 {
-    return BasicConstructor(scope, target.getFields(), allowNulls)
+    return BasicConstructor(scope, target.getMemberFields(), allowNulls)
 }

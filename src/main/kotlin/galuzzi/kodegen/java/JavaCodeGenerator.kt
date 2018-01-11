@@ -19,6 +19,7 @@ package galuzzi.kodegen.java
 import galuzzi.kodegen.CodeWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 private const val IMPORT_PLACEHOLDER = "__IMPORT_PLACEHOLDER__"
 
@@ -30,6 +31,8 @@ private const val IMPORT_PLACEHOLDER = "__IMPORT_PLACEHOLDER__"
  */
 class JavaCodeGenerator(private val outputDir: Path)
 {
+    constructor(outputDir: String) : this(Paths.get(outputDir))
+
     var header = ""
 
     fun generate(elem: JavaTypeElement): Path
