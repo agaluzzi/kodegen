@@ -29,6 +29,7 @@ class Javadoc : CodeElement
 {
     private val description = StringBuilder()
     private val tags = ArrayList<Tag>()
+    private var params: List<Param> = emptyList()
 
     operator fun String.unaryPlus()
     {
@@ -128,9 +129,9 @@ class Javadoc : CodeElement
 
     override fun build(): CodeGen
     {
-        val _description = description.toString()
-        val haveDescription = _description.isNotBlank()
-        val haveTags = tags.isNotEmpty()
+        val descr = description.toString()
+        val haveDescription = descr.isNotBlank()
+        val haveTags = tags.isNotEmpty() || params.isNotEmpty()
 
         if (!haveDescription && !haveTags)
         {
@@ -142,7 +143,7 @@ class Javadoc : CodeElement
             +"/**\n"
             if (haveDescription)
             {
-                _description.split('\n').forEach { +" * $it\n" }
+                descr.split('\n').forEach { +" * $it\n" }
                 if (haveTags) +" *\n"
             }
             tags.sorted().forEach { +" * @${it.name} ${it.value}\n" }

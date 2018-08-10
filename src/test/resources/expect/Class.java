@@ -88,10 +88,16 @@ public class Person implements Serializable
      * Adds another year lived.
      * <p>
      * This should only be invoked annually.
+     *
+     * @throws IllegalStateException if the age rolls over
      */
-    public synchronized void happyBirthday()
+    public synchronized void happyBirthday() throws IllegalStateException, UnsupportedOperationException
     {
         this.age++;
+        if (this.age < 0)
+        {
+            throw new IllegalStateException("Invalid age.");
+        }
     }
 
     @Override

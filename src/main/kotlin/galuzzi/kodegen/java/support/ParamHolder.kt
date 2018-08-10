@@ -54,6 +54,8 @@ interface ParamHolder
         return param(field.name, field.type, allowNull, field.description)
     }
 
+    fun addParamDoc(target: Documented)
+
     class Impl : ParamHolder
     {
         private val params = ArrayList<Param>()
@@ -68,6 +70,14 @@ interface ParamHolder
             val param = Param(type, name, allowNull, description, varargs).apply(init)
             params += param
             return param
+        }
+
+        override fun addParamDoc(target: Documented)
+        {
+            target.javadoc {
+                params.filter { it.description.isNotBlank() }
+                        .forEach { param(it.name, it.description) }
+            }
         }
     }
 }

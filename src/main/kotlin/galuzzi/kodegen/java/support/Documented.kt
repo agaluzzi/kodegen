@@ -27,11 +27,6 @@ interface Documented
 
     fun getJavadoc(): Javadoc
 
-    fun hasJavadoc(): Boolean
-    {
-        return !getJavadoc().isEmpty()
-    }
-
     class Impl : Documented
     {
         private val javadoc = Javadoc()

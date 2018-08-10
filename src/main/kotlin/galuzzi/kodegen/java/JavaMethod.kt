@@ -19,10 +19,7 @@ package galuzzi.kodegen.java
 import galuzzi.kodegen.CodeElement
 import galuzzi.kodegen.CodeGen
 import galuzzi.kodegen.CodeGenScope
-import galuzzi.kodegen.java.support.Annotated
-import galuzzi.kodegen.java.support.BodyHolder
-import galuzzi.kodegen.java.support.Documented
-import galuzzi.kodegen.java.support.ParamHolder
+import galuzzi.kodegen.java.support.*
 import galuzzi.kodegen.join
 
 
@@ -36,7 +33,8 @@ class JavaMethod internal constructor(val scope: Scope,
                                                           Annotated by Annotated.Impl(),
                                                           Documented by Documented.Impl(),
                                                           ParamHolder by ParamHolder.Impl(),
-                                                          BodyHolder by BodyHolder.Impl()
+                                                          BodyHolder by BodyHolder.Impl(),
+                                                          Thrower by Thrower.Impl()
 {
     private val modifiers = Modifiers()
 
@@ -62,7 +60,8 @@ class JavaMethod internal constructor(val scope: Scope,
 
     override fun build(): CodeGen
     {
-        addParamJavadoc(getParams(), getJavadoc())
+        addParamDoc(this)
+        addThrowsDoc(this)
 
         return {
             pad()
@@ -77,18 +76,13 @@ class JavaMethod internal constructor(val scope: Scope,
             +'('
             +join(getParams(), ", ")
             +')'
+            +getThrows()
             +block {
                 +nullChecks(getParams())
                 +getBody()
             }
         }
     }
-}
-
-internal fun addParamJavadoc(params: List<Param>, javadoc: Javadoc)
-{
-    params.filter { it.description.isNotBlank() }
-            .forEach { javadoc.param(it.name, it.description) }
 }
 
 internal fun nullChecks(params: List<Param>): CodeGen

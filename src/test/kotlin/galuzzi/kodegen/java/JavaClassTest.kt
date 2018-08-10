@@ -16,6 +16,7 @@
 
 package galuzzi.kodegen.java
 
+import galuzzi.kodegen.java.control.ifThen
 import galuzzi.kodegen.java.template.*
 import java.io.Serializable
 
@@ -79,8 +80,13 @@ internal class JavaClassTest : JavaGenTest("expect/Class.java")
                     +"This should only be invoked annually."
                 }
                 synchronized()
+                throws(Type.IllegalStateException, "if the age rolls over")
+                throws(Type.from(UnsupportedOperationException::class))
                 body {
-                    +"$age++;"
+                    +"$age++;\n"
+                    +ifThen("$age < 0") {
+                        +"throw new ${Type.IllegalStateException}(\"Invalid age.\");"
+                    }
                 }
             }
 
